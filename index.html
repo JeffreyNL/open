@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Open in Obsidian</title>
+<!--
+  FOS question 303: Claude Desktop opens an https link in the browser, but not an obsidian:// link.
+  This page turns https://<host>/open/#<path in the vault> into obsidian://open?vault=JOOS&file=<path>.
+  The path is in the fragment (after #), which a browser never sends to the server, so the host
+  only ever serves this empty page. No styling of its own: no colour or font outside the house
+  style (Q12).
+-->
+</head>
+<body>
+<p id="status">Obsidian wordt geopend…</p>
+<p><a id="open" href="#">Open in Obsidian</a></p>
+<p><code id="path"></code></p>
+<script>
+  const params = new URLSearchParams(location.search);
+  const vault = params.get("vault") || "JOOS";
+  const path = decodeURIComponent(location.hash.slice(1));
+  const link = document.getElementById("open");
+  if (path) {
+    const target = "obsidian://open?vault=" + encodeURIComponent(vault) + "&file=" + encodeURIComponent(path);
+    link.href = target;
+    document.getElementById("path").textContent = path;
+    location.href = target;
+  } else {
+    document.getElementById("status").textContent = "Geen pad in de link (na #).";
+    link.remove();
+  }
+</script>
+</body>
+</html>
