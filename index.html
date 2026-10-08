@@ -20,9 +20,21 @@
 <script>
   const params = new URLSearchParams(location.search);
   const vault = params.get("vault") || "JOOS";
-  const path = decodeURIComponent(location.hash.slice(1));
+  const raw = location.hash.slice(1);
   const link = document.getElementById("open");
-  if (path) {
+  let path = "";
+  let valid = true;
+  try {
+    path = decodeURIComponent(raw);
+  } catch {
+    // A hand-made link with a lone "%" throws a URIError; without this the page hangs on its first line.
+    valid = false;
+  }
+  if (!valid) {
+    document.getElementById("status").textContent = "Ongeldige link: het pad na # is niet goed gecodeerd.";
+    document.getElementById("path").textContent = raw;
+    link.remove();
+  } else if (path) {
     const target = "obsidian://open?vault=" + encodeURIComponent(vault) + "&file=" + encodeURIComponent(path);
     link.href = target;
     document.getElementById("path").textContent = path;
